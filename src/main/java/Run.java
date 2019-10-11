@@ -10,28 +10,29 @@ public class Run {
     private final static Logger log = Logger.getLogger(Run.class.getName());
 
     public static void main(String[] args) {
-        {
-            try {
 
-                byte[] coverImagesBytes = processInput("src/main/java/images/butterfly.bmp");
-                byte[] fileBytes = processInput("src/main/java/textfiles/example1.txt");
+        byte[] coverImagesBytes = processInput("src/main/java/images/butterfly.bmp");
+        byte[] fileBytes = processInput("src/main/java/textfiles/example1.txt");
 
-                encodeFile(coverImagesBytes, fileBytes);
+        encodeFile(coverImagesBytes, fileBytes);
 
-            } catch (IOException e) {
-                log.warning("File I/O exception: " + e.toString());
-            }
-        }
     }
 
-    private static byte[] processInput(String path) throws IOException {
+    private static byte[] processInput(String path)  {
         Path inputPath = Paths.get(path);
-        InputStream inputStream = Files.newInputStream(inputPath, StandardOpenOption.CREATE_NEW);
+        InputStream inputStream = InputStream.nullInputStream();
+        try {
+            inputStream = Files.newInputStream(inputPath, StandardOpenOption.CREATE_NEW);
+            inputStream.close();
+            return inputStream.readAllBytes();
+        } catch (IOException e) {
+            log.warning("File I/O exception: " + e.toString());
+        }
+        return new byte[]{};
 
-        return inputStream.readAllBytes();
     }
 
-    private static void encodeFile(byte[] coverImage, byte[] input){
+    private static void encodeFile(byte[] coverImage, byte[] input) {
         //start at 54 to skip header of image
         for (int x = 54; x < coverImage.length; x = x + 8) {
             //TODO

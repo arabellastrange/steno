@@ -11,11 +11,22 @@ public class Run {
 
     public static void main(String[] args) {
 
-        byte[] coverImagesBytes = processInput("src/main/java/images/butterfly.bmp");
-        byte[] fileBytes = processInput("src/main/java/textfiles/example1.txt");
+       encodeFile("src/main/java/images/butterfly.bmp", "src/main/java/textfiles/example1.txt");
 
+    }
+
+
+    private static void encodeFile(String coverImagePath, String inputPath){
+        byte[] coverImagesBytes = processInput(coverImagePath);
+        byte[] fileBytes = processInput(inputPath);
         encodeFile(coverImagesBytes, fileBytes);
+    }
 
+    private static void encodeFile(byte[] coverImage, byte[] input) {
+        //start at 54 to skip header of image
+        for (int x = 54; x < coverImage.length; x = x + 8) {
+            //TODO
+        }
     }
 
     private static byte[] processInput(String path)  {
@@ -30,12 +41,5 @@ public class Run {
         }
         return new byte[]{};
 
-    }
-
-    private static void encodeFile(byte[] coverImage, byte[] input) {
-        //start at 54 to skip header of image
-        for (int x = 54; x < coverImage.length; x = x + 8) {
-            //TODO
-        }
     }
 }

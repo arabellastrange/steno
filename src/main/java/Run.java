@@ -40,8 +40,9 @@ public class Run {
     }
 
     private static void encodeFile(byte[] coverImage, byte[] input) {
-        //start at 54 to skip header of image, split into header and image
         //TODO add header information to the byte array produced after encoding
+
+        // start at 54 to skip header of image, split into header and image
         byte[] header = Arrays.copyOfRange(coverImage, 0, 53);
         byte[] image = Arrays.copyOfRange(coverImage, 54, coverImage.length - 1);
 
@@ -49,33 +50,20 @@ public class Run {
         log.info("Example byte of input [0]: " + input[0]);
 
         //convert image bytes[] to bits
-        ArrayList<String> imageBits = new ArrayList();
-        for (int x = 0; x < image.length; x++) {
-            imageBits.add(Integer.toBinaryString(image[x] & 0xFF));
-        }
-
+        ArrayList<String> imageBits = imageByteToBitConverter(image);
         log.info("Example bit of image[0] " + imageBits.get(0));
 
-        //convert input bytes[] to bits
-        ArrayList<String> inputBits = new ArrayList();
-        for (int x = 0; x < input.length; x++) {
-            String inputBit = Integer.toBinaryString(input[x] & 0xFF);
-            //pad input bits with zeros to produce fixed length bytes to encode
-            if (inputBit.length() < 8) {
-                int padding = 8 - inputBit.length();
-                for (int i = 0; i < padding; i++) {
-                    inputBit = "0" + inputBit;
-                }
-            }
-            inputBits.add(inputBit);
-        }
+        ArrayList<String> inputBits = fileByteToBitConverter(input);
         log.info("Example bit of input " + inputBits.get(0));
 
         int inputBytePosition = 0;
         int inputBitPosition = 0;
-        for (int x = 0; x < imageBits.size(); x++) {
-            String newValue = imageBits.get(x).substring(0, imageBits.get(x).length() - 1) + inputBits.get(inputBytePosition).substring(inputBitPosition, inputBitPosition + 1);
-            imageBits.set(x, newValue);
+        for (int i = 0; i < imageBits.size(); i++) {
+            String replacementInputBit = inputBits.get(inputBytePosition).substring(inputBitPosition, inputBitPosition + 1);
+            String mostSignificantImageBits = imageBits.get(i).substring(0, imageBits.get(i).length() - 1);
+
+            String newValue = mostSignificantImageBits + replacementInputBit;
+            imageBits.set(i, newValue);
 
             inputBitPosition++;
 
@@ -100,8 +88,25 @@ public class Run {
         renderOutputImage(newImageBytes);
     }
 
-    private static void renderOutputImage(ArrayList<Byte> newImageBytes) {
-        //TODO
+    private static ArrayList<String> imageByteToBitConverter(byte[] image) {
+        ArrayList<String> imageBits = new ArrayList<>();
+        for (byte b : image) {
+            imageBits.add(Integer.toBinaryString(b & 0xFF));
+        }
+        return imageBits;
+    }
+
+    private static ArrayList<String> fileByteToBitConverter(byte[] input) {
+        ArrayList<String> inputBits = new ArrayList<>();
+        for (byte b : input) {
+            StringBuilder inputBit = new StringBuilder(Integer.toBinaryString(b & 0xFF));
+            //pad input bits with zeros to produce fixed length bytes to encode
+            while (inputBit.length() < 8) {
+                inputBit.insert(0, "0");
+            }
+            inputBits.add(inputBit.toString());
+        }
+        return inputBits;
     }
 
 
@@ -117,5 +122,9 @@ public class Run {
         }
         return new byte[]{};
 
+    }
+
+    private static void renderOutputImage(ArrayList<Byte> newImageBytes) {
+        //TODO
     }
 }

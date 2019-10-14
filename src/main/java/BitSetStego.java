@@ -8,10 +8,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.logging.Logger;
 
-public class Run {
-    private final static Logger log = Logger.getLogger(Run.class.getName());
+public class BitSetStego {
+    private final static Logger log = Logger.getLogger(BitSetStego.class.getName());
 
     public static void main(String[] args) {
         encodeFile("src/main/java/images/butterfly.bmp", "src/main/java/textfiles/example1.txt");
@@ -50,65 +51,31 @@ public class Run {
         log.info("Example byte of input [0]: " + input[0]);
 
         //convert image bytes[] to bits
-        ArrayList<String> imageBits = imageByteToBitConverter(image);
+        BitSet imageBits = byteToBitConverter(image);
         log.info("Example bit of image[0] " + imageBits.get(0));
 
-        ArrayList<String> inputBits = fileByteToBitConverter(input);
+        BitSet inputBits = byteToBitConverter(input);
         log.info("Example bit of input " + inputBits.get(0));
 
-        int inputBytePosition = 0;
         int inputBitPosition = 0;
-        for (int i = 0; i < imageBits.size(); i++) {
-            String replacementInputBit = inputBits.get(inputBytePosition).substring(inputBitPosition, inputBitPosition + 1);
-            String mostSignificantImageBits = imageBits.get(i).substring(0, imageBits.get(i).length() - 1);
-
-            String newValue = mostSignificantImageBits + replacementInputBit;
-            imageBits.set(i, newValue);
-
+        for (int i = 7; i < imageBits.size(); i = i + 7) {
+            imageBits.set(i, inputBits.get(inputBitPosition));
             inputBitPosition++;
-
-            if(inputBitPosition == 7){
-               inputBytePosition++;
-               inputBitPosition = 0;
-            }
-
-            if (inputBytePosition == input.length) {
-                break;
-            }
         }
 
         log.info("Example encoded bit of image [0] " + imageBits.get(0));
 
         //convert bits to Bytes[]
-        ArrayList<Byte> newImageBytes = new ArrayList<>();
-        imageBits.forEach(b -> newImageBytes.add(Byte.parseByte(b, 2)));
+        byte[] newImageBytes = imageBits.toByteArray();
 
-        log.info("Example encoded byte of image[0] " + newImageBytes.get(0));
+        log.info("Example encoded byte of image[0] " + newImageBytes[0]);
 
         renderOutputImage(newImageBytes);
     }
 
-    private static ArrayList<String> imageByteToBitConverter(byte[] image) {
-        ArrayList<String> imageBits = new ArrayList<>();
-        for (byte b : image) {
-            imageBits.add(Integer.toBinaryString(b & 0xFF));
-        }
-        return imageBits;
+    private static BitSet byteToBitConverter(byte[] array) {
+        return BitSet.valueOf(array);
     }
-
-    private static ArrayList<String> fileByteToBitConverter(byte[] input) {
-        ArrayList<String> inputBits = new ArrayList<>();
-        for (byte b : input) {
-            StringBuilder inputBit = new StringBuilder(Integer.toBinaryString(b & 0xFF));
-            //pad input bits with zeros to produce fixed length bytes to encode
-            while (inputBit.length() < 8) {
-                inputBit.insert(0, "0");
-            }
-            inputBits.add(inputBit.toString());
-        }
-        return inputBits;
-    }
-
 
     private static byte[] processInput(String path) {
         Path inputPath = Paths.get(path);
@@ -124,7 +91,7 @@ public class Run {
 
     }
 
-    private static void renderOutputImage(ArrayList<Byte> newImageBytes) {
+    private static void renderOutputImage(byte[] newImageBytes) {
         //TODO
     }
 }

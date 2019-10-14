@@ -17,13 +17,14 @@ public class BinaryStringStego {
         encodeFile("src/main/java/images/butterfly.bmp", "src/main/java/textfiles/example1.txt");
     }
 
-    private static void decodeFile(String coverImagePath) {
+    private static void decodeFile(String coverImagePath) throws IOException {
         byte[] coverImageBytes = processInput(coverImagePath);
+        OutputStream out = OutputStream.nullOutputStream();
         try {
-            OutputStream out = new FileOutputStream("output path");
+            out = new FileOutputStream("output path");
             out.write(decodeFile(coverImageBytes));
-        } catch (IOException e) {
-            log.warning("IO exception " + e);
+        } finally {
+            out.close();
         }
     }
 
@@ -34,9 +35,14 @@ public class BinaryStringStego {
 
     private static void encodeFile(String coverImagePath, String inputPath) {
         //TODO throw error if input is too big to be hidden in cover image
-        byte[] coverImageBytes = processInput(coverImagePath);
-        byte[] fileBytes = processInput(inputPath);
-        encodeFile(coverImageBytes, fileBytes);
+        try {
+            byte[] coverImageBytes = processInput(coverImagePath);
+            byte[] fileBytes = processInput(inputPath);
+            encodeFile(coverImageBytes, fileBytes);
+        } catch (IOException e) {
+            log.warning("IO Exception: " + e.toString());
+        }
+
     }
 
     private static void encodeFile(byte[] coverImage, byte[] input) {
@@ -110,18 +116,16 @@ public class BinaryStringStego {
     }
 
 
-    private static byte[] processInput(String path) {
+    private static byte[] processInput(String path) throws IOException {
         Path inputPath = Paths.get(path);
         InputStream inputStream = InputStream.nullInputStream();
         try {
             inputStream = Files.newInputStream(inputPath, StandardOpenOption.CREATE_NEW);
             log.info("processing input stream");
             return inputStream.readAllBytes();
-        } catch (IOException e) {
-            log.warning("File I/O exception: " + e.toString());
+        } finally {
+            inputStream.close();
         }
-        return new byte[]{};
-
     }
 
     private static void renderOutputImage(ArrayList<Byte> newImageBytes) {

@@ -16,7 +16,6 @@ public class Run {
        encodeFile("src/main/java/images/butterfly.bmp", "src/main/java/textfiles/example1.txt");
     }
 
-
     private static void decodeFile(String coverImagePath){
         byte[] coverImageBytes =  processInput(coverImagePath);
         try {
@@ -33,7 +32,6 @@ public class Run {
     }
 
     private static void encodeFile(String coverImagePath, String inputPath){
-
         //TODO throw error if input is too big to be hidden in cover image
         byte[] coverImageBytes = processInput(coverImagePath);
         byte[] fileBytes = processInput(inputPath);
@@ -42,9 +40,12 @@ public class Run {
 
     private static void encodeFile(byte[] coverImage, byte[] input) {
         //start at 54 to skip header of image, split into header and image
+        //TODO add header information to the byte array produced after encoding
         byte[] header = Arrays.copyOfRange(coverImage, 0, 53);
         byte[] image = Arrays.copyOfRange(coverImage, 54, coverImage.length - 1);
-        log.info("length of byte array " + image.length);
+
+        log.info("Example byte of image[0]: " +  image[0]);
+        log.info("Example byte of input [0]: " + input[0]);
 
         //convert Bytes[] to bits
         ArrayList<String> imageBits = new ArrayList();
@@ -52,16 +53,24 @@ public class Run {
             imageBits.add(Integer.toBinaryString(image[x] & 0xFF));
         }
 
+        log.info("Example bit of image[0] " + imageBits.get(0));
+
         ArrayList<String> inputBits = new ArrayList();
         for (int x = 0; x < input.length; x++) {
+            String inputBit = Integer.toBinaryString(input[x] & 0xFF);
+            if(inputBit.length() < 8 ){
+                int padding = 8 - inputBit.length();
+                for(int i = 0; i < padding; i++){
+                    inputBit = "0" + inputBit;
+                }
+            }
             inputBits.add(Integer.toBinaryString(input[x] & 0xFF));
         }
+        log.info("Example bit of input " + inputBits.get(0));
 
-//        log.info("image: " + Arrays.toString(image).substring(0, 20));
-//        log.info("imageBits: " + imageBits.toString().substring(0,20));
         int inputPosition = 0;
         for (int x = 0; x < imageBits.size(); x++){
-            String newValue = imageBits.get(x).substring(0, imageBits.get(x).length() -1) +  inputBits.get(inputPosition);
+            String newValue = imageBits.get(x).substring(0, imageBits.get(x).length() -1) +  inputBits.get(inputPosition));
             imageBits.set(x, newValue);
             inputPosition++;
             if (inputPosition == input.length){
@@ -69,9 +78,13 @@ public class Run {
             }
         }
 
+        log.info("Example encoded bit of image[0] " + imageBits.get(0));
+
         //convert bits to Bytes[]
         ArrayList<Byte> newImageBytes = new ArrayList<>();
-        inputBits.forEach( b -> newImageBytes.add(Byte.parseByte(b)));
+        inputBits.forEach( b -> newImageBytes.add(Byte.parseByte(b, 2)));
+
+        log.info("Example encoded byte of image[0] "+ newImageBytes.get(0));
 
         renderOutputImage(newImageBytes);
     }

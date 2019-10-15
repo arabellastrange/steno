@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 
@@ -14,7 +15,48 @@ public class BitSetStego {
     private static final Logger log = Logger.getLogger(BitSetStego.class.getName());
 
     public static void main(String[] args) {
-        encodeFile("src/main/java/images/all_white_test.bmp", "src/main/java/textfiles/example1.txt");
+        mainMenu();
+//        encodeFile("src/main/java/images/all_white_test.bmp", "src/main/java/textfiles/example1.txt");
+    }
+
+    private static void mainMenu(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Would you like encode (0) or decode (1)?");
+        String choice = input.nextLine();
+        switch (choice) {
+            case "0":
+                System.out.println("Please select a 24-bit cover image stored in src/main/java/images/");
+                System.out.println("e.g. for src/main/java/images/test.bmp please type 'test.bmp'");
+                String coverImagePath = fileSelection("src/main/java/images/");
+                log.info("coverImagePath: " + coverImagePath);
+                System.out.println("Please select the file you wish to hide in the cover image, stored in src/main/java/images/");
+                System.out.println("e.g. for src/main/java/files/test.text please type 'test.txt'");
+                String inputFilePath = fileSelection("src/main/java/files/");
+                log.info("inputFilePath: " + inputFilePath);
+//                encodeFile(coverImagePath, inputFilePath);
+                break;
+            case "1":
+
+//                if (choice = )
+                break;
+            default:
+                System.out.println("Incorrect input, please type 0 to encode a message and 1 to decode a message.");
+                // The user input an unexpected choice.
+        }
+    }
+
+    private static String fileSelection(String pathFolder){
+        Scanner input = new Scanner(System.in);
+        String path = null;
+        File f = null;
+        while (f == null || !f.exists() || path.trim().equals(pathFolder)) {
+            path = pathFolder + input.nextLine();
+            f = new File(path);
+            if  (!f.exists()) {
+                System.out.println("file: " + path + " doesn't exist! Please try again.");
+            }
+        }
+        return path;
     }
 
     private static void decodeFile(String coverImagePath) throws IOException {
@@ -45,8 +87,8 @@ public class BitSetStego {
 
     private static void encodeFile(byte[] coverImage, byte[] input) {
         // start at 54 to skip header of image, split into header and image
-        byte[] image = Arrays.copyOfRange(coverImage, 54, coverImage.length);
         byte[] header = Arrays.copyOfRange(coverImage, 0, 54);
+        byte[] image = Arrays.copyOfRange(coverImage, 54, coverImage.length);
         log.info("Original image header " + header[0]);
         log.info("Example byte of image[0]: " + image[0]);
         log.info("Example byte of input [0]: " + input[0]);

@@ -1,18 +1,14 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
 
-public class BitSetStego {
-    private static final Logger log = Logger.getLogger(BitSetStego.class.getName());
+public class Encode {
+    private static final Logger log = Logger.getLogger(Encode.class.getName());
 
     public static void main(String[] args) {
         mainMenu();
@@ -59,29 +55,13 @@ public class BitSetStego {
         return path;
     }
 
-    private static void decodeFile(String coverImagePath) throws IOException {
-        byte[] coverImageBytes = processInput(coverImagePath);
-        OutputStream out = OutputStream.nullOutputStream();
-        try {
-            out = new FileOutputStream("output path");
-            out.write(decodeFile(coverImageBytes));
-        } finally {
-            out.close();
-        }
-    }
-
-    private static byte[] decodeFile(byte[] coverImageBytes) {
-        //TODO
-        return new byte[]{};
-    }
-
     private static void encodeFile(String coverImagePath, String inputPath) {
         try {
-            byte[] coverImageBytes = processInput(coverImagePath);
-            byte[] fileBytes = processInput(inputPath);
+            byte[] coverImageBytes = InputProcessor.processInput(coverImagePath);
+            byte[] fileBytes = InputProcessor.processInput(inputPath);
             encodeFile(coverImageBytes, fileBytes);
         } catch (IOException e) {
-            log.warning("IO Exception: " + e.toString());
+            log.warning("IO Exception: " + e.getMessage());
         }
     }
 
@@ -128,56 +108,13 @@ public class BitSetStego {
         return BitSet.valueOf(array);
     }
 
-    private static byte[] processInput(String path) throws IOException {
-        Path inputPath = Paths.get(path);
-        InputStream inputStream = InputStream.nullInputStream();
-        try {
-            inputStream = Files.newInputStream(inputPath, StandardOpenOption.CREATE_NEW);
-            log.info("processing input stream");
-            return inputStream.readAllBytes();
-        } finally {
-            inputStream.close();
-        }
-    }
-
     private static void renderOutputImage(byte[] newImageBytes) {
-        //TODO
-//        log.info("newImageBytes: " + Arrays.toString(newImageBytes));
         try {
             ByteArrayInputStream bis = new ByteArrayInputStream(newImageBytes);
             BufferedImage bufferedImage = ImageIO.read(bis);
             ImageIO.write(bufferedImage, "bmp", new File("src/main/java/images/all_white_test_new.bmp"));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warning("IO Exception " + e.getMessage());
         }
-
-
-        //bytes 18-21 represent width. 22-25 represent height
-//        byte[] widthArray = Arrays.copyOfRange(newImageBytes, 18, 22);
-//        byte[] heightArray = Arrays.copyOfRange(newImageBytes, 22, 26);
-//
-//        log.info("start of array: " +  Arrays.toString(Arrays.copyOfRange(newImageBytes, 0, 27)));
-//        log.info("widthArray: " + Arrays.toString(widthArray));
-//        log.info("heightArray: " + Arrays.toString(heightArray));
-//        for ( int x = 0; x < widthArray.length; x++) {
-//            log.info(widthArray[x]);
-//        }
-//        log.info("heightArray: " + heightArray.toString());
-//        int width;
-//        int height;
-//        BufferedImage outputImage = new BufferedImage(newImageBytes.get(18), newImageBytes[22], );
-//
-//        try {
-//            ImageIO.write(outputImage, "BMP", new File("src/main/java/images/output.bmp"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        try
-//        {
-//            File ms = new File();
-//            ms.Write(byteArrayIn, 0, byteArrayIn.Length);
-//            returnImage = Image.FromStream(ms,true);//Exception occurs here
-//        }
-//        catch { }
     }
 }

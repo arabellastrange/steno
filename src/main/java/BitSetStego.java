@@ -51,7 +51,7 @@ public class BitSetStego {
         log.info("Example byte of image[0]: " + image[0]);
         log.info("Example byte of input [0]: " + input[0]);
 
-        if (image.length > input.length) {
+        if ((image.length)/8 > input.length) {
             //convert image bytes[] to bits
             BitSet imageBits = byteToBitConverter(image);
             log.info("Example bit of image[0] " + imageBits.get(0));

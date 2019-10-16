@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class Encode {
     private static final Logger log = Logger.getLogger(Encode.class.getName());
-    private static String COVER_IMAGE_PATH = "src/main/java/images/butterfly.bmp";
+    private static String COVER_IMAGE_PATH = "src/main/java/images/all_white_test.bmp";
     private static String INPUT_MESSAGE_PATH = "src/main/java/textfiles/example2.txt";
     private static String ENCODED_MESSAGE_PATH = COVER_IMAGE_PATH.replace(".bmp", "_encode.bmp");
 
@@ -37,7 +37,6 @@ public class Encode {
 //                encodeFile(coverImagePath, inputFilePath);
                 break;
             case "1":
-
 //                if (choice = )
                 break;
             default:
@@ -64,6 +63,8 @@ public class Encode {
         try {
             byte[] coverImageBytes = InputProcessor.processInput(coverImagePath);
             byte[] fileBytes = InputProcessor.processInput(inputPath);
+            fileBytes = InputProcessor.addDelimiter(fileBytes);
+            fileBytes = InputProcessor.addTypeAndSize(fileBytes);
             encodeFile(coverImageBytes, fileBytes);
         } catch (IOException e) {
             log.warning("IO Exception: " + e.getMessage());
@@ -91,7 +92,7 @@ public class Encode {
 
             //encode every 8th bit of cover image
             int inputBitPosition = 0;
-            for (int i = 7; i < imageBits.size(); i = i + 7) {
+            for (int i = 0; i < imageBits.size(); i = i + 8) {
                 imageBits.set(i, inputBits.get(inputBitPosition));
                 inputBitPosition++;
                 if (inputBitPosition == inputBits.length()) {

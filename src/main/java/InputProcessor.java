@@ -9,7 +9,8 @@ import java.util.logging.Logger;
 public class InputProcessor {
     private static final Logger log = Logger.getLogger(InputProcessor.class.getName());
 
-    private InputProcessor(){}
+    private InputProcessor() {
+    }
 
     public static byte[] processInput(String path) throws IOException {
         Path inputPath = Paths.get(path);
@@ -23,4 +24,16 @@ public class InputProcessor {
         }
     }
 
+    public static byte[] addDelimiter(byte[] bytes) {
+        byte[] delimiter = new byte[]{Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE};
+        byte[] formattedBytes = new byte[bytes.length + delimiter.length];
+        System.arraycopy(delimiter, 0, formattedBytes, 0, delimiter.length);
+        System.arraycopy(bytes, 0, formattedBytes, 3, bytes.length);
+
+        return formattedBytes;
+    }
+
+    public static byte[] addTypeAndSize(byte[] bytes) {
+        return bytes;
+    }
 }

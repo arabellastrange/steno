@@ -1,6 +1,8 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Scanner;
@@ -9,13 +11,16 @@ import java.util.logging.Logger;
 
 public class Encode {
     private static final Logger log = Logger.getLogger(Encode.class.getName());
+    private static String COVER_IMAGE_PATH = "src/main/java/images/butterfly.bmp";
+    private static String INPUT_MESSAGE_PATH = "src/main/java/textfiles/example2.txt";
+    private static String ENCODED_MESSAGE_PATH = COVER_IMAGE_PATH.replace(".bmp", "_encode.bmp");
 
     public static void main(String[] args) {
-        mainMenu();
-//        encodeFile("src/main/java/images/all_white_test.bmp", "src/main/java/textfiles/example1.txt");
+        encodeFile(COVER_IMAGE_PATH, INPUT_MESSAGE_PATH);
+        //mainMenu();
     }
 
-    private static void mainMenu(){
+    private static void mainMenu() {
         Scanner input = new Scanner(System.in);
         System.out.println("Would you like encode (0) or decode (1)?");
         String choice = input.nextLine();
@@ -41,14 +46,14 @@ public class Encode {
         }
     }
 
-    private static String fileSelection(String pathFolder){
+    private static String fileSelection(String pathFolder) {
         Scanner input = new Scanner(System.in);
         String path = null;
         File f = null;
         while (f == null || !f.exists() || path.trim().equals(pathFolder)) {
             path = pathFolder + input.nextLine();
             f = new File(path);
-            if  (!f.exists()) {
+            if (!f.exists()) {
                 System.out.println("file: " + path + " doesn't exist! Please try again.");
             }
         }
@@ -67,36 +72,44 @@ public class Encode {
 
     private static void encodeFile(byte[] coverImage, byte[] input) {
         // start at 54 to skip header of image, split into header and image
-        byte[] header = Arrays.copyOfRange(coverImage, 0, 54);
         byte[] image = Arrays.copyOfRange(coverImage, 54, coverImage.length);
-        log.info("Original image header " + header[0]);
-        log.info("Example byte of image[0]: " + image[0]);
-        log.info("Example byte of input [0]: " + input[0]);
+        byte[] header = Arrays.copyOfRange(coverImage, 0, 54);
 
-        if ((image.length)/8 > input.length) {
-            //convert image bytes[] to bits
+        log.info("First byte of original image header " + header[0]);
+        log.info("First byte of image " + image[0]);
+        log.info("First byte of input " + input[0]);
+
+        if ((image.length) / 8 > input.length) {
+            //convert image byte[] to bits
             BitSet imageBits = byteToBitConverter(image);
-            log.info("Example bit of image[0] " + imageBits.get(0));
+            for (int i = 0; i < 8; i++)
+                log.info("First 8 bits of image " + imageBits.get(i));
 
             BitSet inputBits = byteToBitConverter(input);
-            log.info("Example bit of input " + inputBits.get(0));
+            for (int i = 0; i < 8; i++)
+                log.info("First 8 bits of input " + inputBits.get(i));
 
+            //encode every 8th bit of cover image
             int inputBitPosition = 0;
             for (int i = 7; i < imageBits.size(); i = i + 7) {
                 imageBits.set(i, inputBits.get(inputBitPosition));
                 inputBitPosition++;
-                if(inputBitPosition == inputBits.length()){
+                if (inputBitPosition == inputBits.length()) {
                     break;
                 }
             }
 
-            log.info("Example encoded bit of image [0] " + imageBits.get(0));
+            for (int i = 0; i < 8; i++)
+                log.info("First 8 bits of encoded image " + imageBits.get(i));
 
-            //convert bits to Bytes[]
+            //convert bits to byte[]
             byte[] newImageBytes = new byte[header.length + imageBits.length()];
+
+            //concat original header with new encoded image
             System.arraycopy(header, 0, newImageBytes, 0, header.length);
             System.arraycopy(imageBits.toByteArray(), 0, newImageBytes, header.length, imageBits.toByteArray().length);
-            log.info("Modified image header " + newImageBytes[0]);
+            log.info("First byte of modified image header " + newImageBytes[0]);
+
             renderOutputImage(newImageBytes);
 
         } else {
@@ -112,7 +125,7 @@ public class Encode {
         try {
             ByteArrayInputStream bis = new ByteArrayInputStream(newImageBytes);
             BufferedImage bufferedImage = ImageIO.read(bis);
-            ImageIO.write(bufferedImage, "bmp", new File("src/main/java/images/all_white_test_new.bmp"));
+            ImageIO.write(bufferedImage, "bmp", new File(ENCODED_MESSAGE_PATH));
         } catch (IOException e) {
             log.warning("IO Exception " + e.getMessage());
         }

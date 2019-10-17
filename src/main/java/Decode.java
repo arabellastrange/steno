@@ -21,21 +21,53 @@ public class Decode {
 
     private static byte[] decodeFile(byte[] encodedImage) {
         //TODO
-        byte[] header = Arrays.copyOfRange(encodedImage, 0, 54);
-        byte[] size = Arrays.copyOfRange(encodedImage, 54, 58);
-        byte[] ex = Arrays.copyOfRange(encodedImage, 58, 66);
+        byte[] encodedImage1 = Arrays.copyOfRange(encodedImage, 54, encodedImage.length);
+        byte[] ex = Arrays.copyOfRange(encodedImage, 86, 598);
 
-        //int representation of size multiplied by 8 to see how many bytes along need to go
-        int sizeInt = ByteBuffer.wrap(size).getInt() * 8;
-        log.info("sizeInt: " + sizeInt);
-        byte[] message = Arrays.copyOfRange(encodedImage, 66, sizeInt + 66);
-        String extension = null;
-        try {
-            extension = new String(ex, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        BitSet imageBitSet = BitSet.valueOf(encodedImage1);
+        for (int i = 0; i < 9000; i = i + 8){
+            if (i == 432){
+                System.out.println("(HEADER)");
+            }else if(i == 560){
+                System.out.println("(SIZE)");
+            }
+            else if(i == 1072){
+                System.out.println("(EXT)");
+            }
+            else if(i == 8208){
+                System.out.println("(FILE)");
+            }
+            if (imageBitSet.get(i)){
+                System.out.print("1");
+            }else{
+                System.out.print("0");
+            }
         }
-        System.out.println(extension);
+        BitSet decodedSize = new BitSet();
+        for (int i = 432; i < 560; i = i + 8) {
+            decodedSize.set(i, imageBitSet.get(i));
+        }
+
+
+        byte[] finalSize = decodedSize.toByteArray();
+        int sizeInt = ByteBuffer.wrap(finalSize).getInt() * 8;
+        log.info("sizeInt: " + sizeInt);
+
+
+//        try {
+//            wholetetx = new String(encodedImage, "UTF-8");
+//            System.out.println(wholetetx);
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        byte[] message = Arrays.copyOfRange(encodedImage, 66, sizeInt + 66);
+//        String extension = null;
+//        try {
+//            extension = new String(ex, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println(extension);
 
 //        File newFile = new File();
 

@@ -7,14 +7,12 @@ import java.util.logging.Logger;
 
 public class Decode {
     private static final Logger log = Logger.getLogger(Decode.class.getName());
-
-    public static void main(String[] args) {
-        decodeFile("src/main/java/images/all_white_test_encode.bmp");
-    }
-
-    private static void decodeFile(String encodedImage) {
+    private static String DECODED_MESSAGE_PATH;
+    public static void decodeFile(String encodedImagePath) {
         try {
-            byte[] encodedImageBytes = InputProcessor.processInput(encodedImage);
+            //todo change the output file type to the correct type
+            DECODED_MESSAGE_PATH = encodedImagePath.replace(".bmp", "_decoded.TXT");
+            byte[] encodedImageBytes = InputProcessor.processInput(encodedImagePath);
             decodeFile(encodedImageBytes);
         } catch (IOException e) {
             log.warning("IO Exception: " + e.getMessage());
@@ -46,7 +44,7 @@ public class Decode {
     }
 
     private static void produceOutput(byte[] decodedMessage) {
-        try (OutputStream out = new FileOutputStream("output path")) {
+        try (OutputStream out = new FileOutputStream(DECODED_MESSAGE_PATH)) {
             out.write(decodedMessage);
         } catch (IOException e) {
             log.warning("IO Exception " + e.getMessage());

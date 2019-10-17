@@ -27,13 +27,20 @@ public class InputProcessor {
     public static byte[] addDelimiter(byte[] bytes) {
         byte[] delimiter = new byte[]{Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE};
         byte[] formattedBytes = new byte[bytes.length + delimiter.length];
-        System.arraycopy(delimiter, 0, formattedBytes, 0, delimiter.length);
-        System.arraycopy(bytes, 0, formattedBytes, 3, bytes.length);
+        System.arraycopy(delimiter, 0, formattedBytes, bytes.length, delimiter.length);
+        System.arraycopy(bytes, 0, formattedBytes, 0, bytes.length);
 
         return formattedBytes;
     }
 
     public static byte[] addTypeAndSize(byte[] bytes) {
-        return bytes;
+        //adds size of file to input array
+        byte fileSize = Byte.parseByte(String.valueOf(bytes.length));
+        byte[] formattedBytes = new byte[bytes.length + 1];
+        bytes[0] = fileSize;
+        System.arraycopy(bytes, 0, formattedBytes, 1, bytes.length);
+
+        //TODO add file type to input array
+        return formattedBytes;
     }
 }

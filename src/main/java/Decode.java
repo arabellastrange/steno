@@ -18,6 +18,7 @@ public class Decode {
         try {
             byte[] encodedImageBytes = InputProcessor.processInput(encodedImagePath);
             byte[] output = decodeFile(encodedImageBytes);
+            DECODED_MESSAGE_PATH = encodedImagePath.replace("files", "images" + fileExtension);
             DECODED_MESSAGE_PATH = encodedImagePath.replace(".bmp", "_decoded" + fileExtension);
             log.info("Saving output to: " + DECODED_MESSAGE_PATH);
             produceOutput(output);

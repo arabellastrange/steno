@@ -44,7 +44,7 @@ public class Encode {
             for (int i = 0; i < 8; i++)
                 log.info("First 8 bits of input " + inputBits.get(i));
 
-            //encode every 8th bit of cover image - corrected
+            //encode every 8th bit of cover image
             int inputBitPosition = 0;
             for (int i = 0; i < imageBits.size(); i = i + 8) {
                 imageBits.set(i, inputBits.get(inputBitPosition));

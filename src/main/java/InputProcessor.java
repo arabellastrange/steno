@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,17 +34,17 @@ public class InputProcessor {
         byte[] fileSize = BigInteger.valueOf(bytes.length).toByteArray();
 
         //pad file size to 4 bytes
-        byte[] sizePadding = new byte[]{Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE};
+        byte[] sizePadding = new byte[]{0, 0, 0, 0};
         byte[] paddedFileSize = Arrays.copyOf(fileSize, 4);
         if (fileSize.length < 4) {
             System.arraycopy(sizePadding, 0, paddedFileSize, 0, 4 - fileSize.length);
             System.arraycopy(fileSize, 0, paddedFileSize, 4 - fileSize.length, fileSize.length);
         }
 
-        byte[] fileType = fileExtension.getBytes(Charset.forName("UTF-8"));
+        byte[] fileType = fileExtension.getBytes(StandardCharsets.UTF_8);
 
         //pad file extension to 8 bytes
-        byte[] typePadding = new byte[]{Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE, Byte.MIN_VALUE};
+        byte[] typePadding = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
         byte[] paddedFileType = Arrays.copyOf(fileType, 8);
         if(fileType.length < 8){
             System.arraycopy(typePadding, 0, paddedFileType, 0, 8 - fileType.length);

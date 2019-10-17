@@ -63,7 +63,6 @@ public class Encode {
         try {
             byte[] coverImageBytes = InputProcessor.processInput(coverImagePath);
             byte[] fileBytes = InputProcessor.processInput(inputPath);
-            fileBytes = InputProcessor.addDelimiter(fileBytes);
             fileBytes = InputProcessor.addTypeAndSize(fileBytes);
             encodeFile(coverImageBytes, fileBytes);
         } catch (IOException e) {

@@ -22,9 +22,10 @@ class Encode {
 
     private Encode(){}
 
-    public static void encodeFile(String coverImagePath, String inputPath) {
+    static void encodeFile(String coverImagePath, String inputPath) {
         try {
-            ENCODED_MESSAGE_PATH = coverImagePath.replace(".bmp", "_encode.bmp");
+            ENCODED_MESSAGE_PATH = coverImagePath.replace("images", "output");
+            ENCODED_MESSAGE_PATH  =  ENCODED_MESSAGE_PATH.replace(".bmp", "_encode.bmp");
 
             byte[] coverImageBytes = InputProcessor.processInput(coverImagePath);
             byte[] fileBytes = InputProcessor.processInput(inputPath);
@@ -59,7 +60,7 @@ class Encode {
             for (int i = 0; i < imageBits.size(); i = i + 8) {
                 imageBits.set(i, inputBits.get(inputBitPosition));
                 inputBitPosition++;
-                if (inputBitPosition == inputBits.length()) {
+                if (inputBitPosition > inputBits.length() + 1) {
                     break;
                 }
             }

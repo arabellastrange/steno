@@ -10,6 +10,7 @@ public class Driver {
     private static String INPUT_IMAGE_PATH = "src/main/java/images/butterfly_encode.bmp";
     private static String IMAGE_FOLDER = "src/main/java/images/";
     private static String FILES_FOLDER = "src/main/java/files/";
+    private static String OUTPUT_FOLDER = "src/main/java/output/";
 
     static {
         String path = Driver.class.getClassLoader()
@@ -22,7 +23,7 @@ public class Driver {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         System.out.println("Would you like encode (0) or decode (1)?");
-        String choice = input.nextLine();
+        String choice = input.nextLine().strip();
         switch (choice) {
             case "0":
                 System.out.println("Please select a 24-bit cover image stored in " + IMAGE_FOLDER);
@@ -36,9 +37,9 @@ public class Driver {
                 Encode.encodeFile(COVER_IMAGE_PATH, INPUT_MESSAGE_PATH);
                 break;
             case "1":
-                System.out.println("Please select a 24-bit image that you wish to decode. (Stored in " + IMAGE_FOLDER);
-                System.out.println("e.g. for src/main/java/images/image_to_decrypt.bmp please type 'test.bmp'");
-                INPUT_IMAGE_PATH = fileSelection(IMAGE_FOLDER);
+                System.out.println("Please select a 24-bit image that you wish to decode. (Stored in " + OUTPUT_FOLDER);
+                System.out.println("e.g. for src/main/java/output/image_to_decrypt.bmp please type 'test.bmp'");
+                INPUT_IMAGE_PATH = fileSelection(OUTPUT_FOLDER);
                 Decode.decodeFile(INPUT_IMAGE_PATH);
                 break;
             default:
@@ -53,7 +54,7 @@ public class Driver {
         while (f == null || !f.exists() || path.trim().equals(pathFolder)) {
             path = pathFolder + input.nextLine();
             f = new File(path);
-            if (pathFolder.equals(IMAGE_FOLDER) && !path.endsWith(".bmp")) {
+            if ((pathFolder.equals(IMAGE_FOLDER)  || pathFolder.equals(OUTPUT_FOLDER)) && !path.endsWith(".bmp")) {
                 f = null;
                 System.out.println("file: " + path + " isn't a .bmp file! Please try again.");
             } else if (!f.exists()) {

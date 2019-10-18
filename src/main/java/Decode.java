@@ -27,7 +27,7 @@ class Decode {
             byte[] encodedImageBytes = InputProcessor.processInput(encodedImagePath);
             byte[] output = decodeFile(encodedImageBytes);
             DECODED_MESSAGE_PATH = encodedImagePath.replace("src/main/java/images/", "src/main/java/output/");
-            DECODED_MESSAGE_PATH = DECODED_MESSAGE_PATH.replace(".bmp", "_decoded" + fileExtension);
+            DECODED_MESSAGE_PATH = encodedImagePath.replace("output", "images" + fileExtension);
             log.info("Saving output to: " + DECODED_MESSAGE_PATH);
             produceOutput(output);
         } catch (IOException e) {

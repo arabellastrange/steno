@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,11 +9,19 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-public class InputProcessor {
-    private static final Logger log = Logger.getLogger(InputProcessor.class.getName());
+class InputProcessor {
+    private static final Logger log;
     private static String fileExtension;
 
     private InputProcessor() {
+    }
+
+    static {
+        String path = InputProcessor.class.getClassLoader()
+                .getResource("logging.properties")
+                .getFile();
+        System.setProperty("java.util.logging.config.file", path);
+        log = Logger.getLogger(InputProcessor.class.getName());
     }
 
     public static byte[] processInput(String path) throws IOException {
@@ -46,7 +53,7 @@ public class InputProcessor {
         //pad file extension to 8 bytes
         byte[] typePadding = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
         byte[] paddedFileType = Arrays.copyOf(fileType, 8);
-        if(fileType.length < 8){
+        if (fileType.length < 8) {
             System.arraycopy(typePadding, 0, paddedFileType, 0, 8 - fileType.length);
             System.arraycopy(fileType, 0, paddedFileType, 8 - fileType.length, fileType.length);
         }

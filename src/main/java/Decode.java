@@ -6,10 +6,18 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.logging.Logger;
 
-public class Decode {
-    private static final Logger log = Logger.getLogger(Decode.class.getName());
+class Decode {
+    private static final Logger log;
     private static String DECODED_MESSAGE_PATH;
     private static String fileExtension;
+
+    static {
+        String path = Decode.class.getClassLoader()
+                .getResource("logging.properties")
+                .getFile();
+        System.setProperty("java.util.logging.config.file", path);
+        log = Logger.getLogger(Decode.class.getName());
+    }
 
     private Decode() {
     }
@@ -18,7 +26,8 @@ public class Decode {
         try {
             byte[] encodedImageBytes = InputProcessor.processInput(encodedImagePath);
             byte[] output = decodeFile(encodedImageBytes);
-            DECODED_MESSAGE_PATH = encodedImagePath.replace(".bmp", "_decoded" + fileExtension);
+            DECODED_MESSAGE_PATH = encodedImagePath.replace("src/main/java/images/", "src/main/java/output/");
+            DECODED_MESSAGE_PATH = DECODED_MESSAGE_PATH.replace(".bmp", "_decoded" + fileExtension);
             log.info("Saving output to: " + DECODED_MESSAGE_PATH);
             produceOutput(output);
         } catch (IOException e) {

@@ -8,9 +8,20 @@ import java.util.BitSet;
 import java.util.logging.Logger;
 
 
-public class Encode {
-    private static final Logger log = Logger.getLogger(Encode.class.getName());
+class Encode {
+    private static final Logger log;
     private static String ENCODED_MESSAGE_PATH;
+
+    static {
+        String path = Encode.class.getClassLoader()
+                .getResource("logging.properties")
+                .getFile();
+        System.setProperty("java.util.logging.config.file", path);
+        log = Logger.getLogger(Encode.class.getName());
+    }
+
+    private Encode() {
+    }
 
     public static void encodeFile(String coverImagePath, String inputPath) {
         try {

@@ -7,6 +7,9 @@ public class Driver {
     private static String COVER_IMAGE_PATH = "src/main/java/images/butterfly.bmp";
     private static String INPUT_MESSAGE_PATH = "src/main/java/textfiles/example2.txt";
     private static String INPUT_IMAGE_PATH = "src/main/java/images/butterfly_encode.bmp";
+    private static String IMAGE_FOLDER = "src/main/java/images/";
+    private static String FILES_FOLDER = "src/main/java/files/";
+
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -25,10 +28,14 @@ public class Driver {
                 Encode.encodeFile(COVER_IMAGE_PATH, INPUT_MESSAGE_PATH);
                 break;
             case "1":
+                System.out.println("Please select a 24-bit image that you wish to decode. (Stored in " + IMAGE_FOLDER);
+                System.out.println("e.g. for src/main/java/images/image_to_decrypt.bmp please type 'test.bmp'");
+                INPUT_IMAGE_PATH = fileSelection(IMAGE_FOLDER);
                 Decode.decodeFile(INPUT_IMAGE_PATH);
                 break;
             default:
                 System.out.println("Incorrect input, please type 0 to encode a message and 1 to decode a message.");
+                // The user input an unexpected choice.
         }
     }
 

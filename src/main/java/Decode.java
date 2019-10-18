@@ -6,10 +6,18 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.logging.Logger;
 
-public class Decode {
-    private static final Logger log = Logger.getLogger(Decode.class.getName());
+class Decode {
+    private static final Logger log;
     private static String DECODED_MESSAGE_PATH;
     private static String fileExtension;
+
+    static {
+        String path = Decode.class.getClassLoader()
+                .getResource("logging.properties")
+                .getFile();
+        System.setProperty("java.util.logging.config.file", path);
+        log = Logger.getLogger(Decode.class.getName());
+    }
 
     private Decode() {
     }
@@ -18,8 +26,8 @@ public class Decode {
         try {
             byte[] encodedImageBytes = InputProcessor.processInput(encodedImagePath);
             byte[] output = decodeFile(encodedImageBytes);
-            DECODED_MESSAGE_PATH = encodedImagePath.replace("files", "images" + fileExtension);
-            DECODED_MESSAGE_PATH = encodedImagePath.replace(".bmp", "_decoded" + fileExtension);
+            DECODED_MESSAGE_PATH = encodedImagePath.replace("src/main/java/images/", "src/main/java/output/");
+            DECODED_MESSAGE_PATH = DECODED_MESSAGE_PATH.replace(".bmp", "_decoded" + fileExtension);
             log.info("Saving output to: " + DECODED_MESSAGE_PATH);
             produceOutput(output);
         } catch (IOException e) {
@@ -37,7 +45,9 @@ public class Decode {
 
         BitSet lsbSize = extractLSBFromByteArray(fileSize);
         BitSet lsbExtension = extractLSBFromByteArray(extension);
-        int fileBitLength = ByteBuffer.wrap(lsbSize.toByteArray()).getInt() * 8;
+
+        // convert byte length to bit length, add the 12 bytes at the end that are used for the ext and size
+        int fileBitLength = (ByteBuffer.wrap(lsbSize.toByteArray()).getInt() * 8) + 96;
         fileExtension = new String(lsbExtension.toByteArray());
         fileExtension = fileExtension.substring(fileExtension.indexOf('.'));
 

@@ -60,7 +60,7 @@ class Encode {
             for (int i = 0; i < imageBits.size(); i = i + 8) {
                 imageBits.set(i, inputBits.get(inputBitPosition));
                 inputBitPosition++;
-                if (inputBitPosition == inputBits.length()) {
+                if (inputBitPosition > inputBits.length()) {
                     break;
                 }
             }

@@ -4,9 +4,9 @@ import java.util.logging.Logger;
 
 public class Driver {
     private static final Logger log;
-    private static String COVER_IMAGE_PATH = "src/main/java/images/butterfly.bmp";
-    private static String INPUT_MESSAGE_PATH = "src/main/java/files/example2.txt";
-    private static String INPUT_IMAGE_PATH = "src/main/java/images/butterfly_encode.bmp";
+    private static String COVER_IMAGE_PATH = "src/main/java/images/all_white_test.bmp";
+    private static String INPUT_MESSAGE_PATH = "src/main/java/files/example1.txt";
+    private static String INPUT_IMAGE_PATH = "src/main/java/images/all_white_test_encode.bmp";
 
     static {
         String path = Driver.class.getClassLoader()

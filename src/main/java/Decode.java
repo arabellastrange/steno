@@ -45,7 +45,9 @@ class Decode {
 
         BitSet lsbSize = extractLSBFromByteArray(fileSize);
         BitSet lsbExtension = extractLSBFromByteArray(extension);
-        int fileBitLength = ByteBuffer.wrap(lsbSize.toByteArray()).getInt() * 8;
+
+        // convert byte length to bit length, add the 12 bytes at the end that are used for the ext and size
+        int fileBitLength = (ByteBuffer.wrap(lsbSize.toByteArray()).getInt() * 8) + 96;
         fileExtension = new String(lsbExtension.toByteArray());
         fileExtension = fileExtension.substring(fileExtension.indexOf('.'));
 

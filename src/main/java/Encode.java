@@ -8,7 +8,7 @@ import java.util.BitSet;
 import java.util.logging.Logger;
 
 
-public class Encode {
+class Encode {
     private static final Logger log;
     private static String ENCODED_MESSAGE_PATH;
 
@@ -19,6 +19,8 @@ public class Encode {
         System.setProperty("java.util.logging.config.file", path);
         log = Logger.getLogger(Encode.class.getName());
     }
+
+    private Encode(){}
 
     public static void encodeFile(String coverImagePath, String inputPath) {
         try {

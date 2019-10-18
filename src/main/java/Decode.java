@@ -22,7 +22,7 @@ class Decode {
     private Decode() {
     }
 
-    public static void decodeFile(String encodedImagePath) {
+    static void decodeFile(String encodedImagePath) {
         try {
             byte[] encodedImageBytes = InputProcessor.processInput(encodedImagePath);
             byte[] output = decodeFile(encodedImageBytes);

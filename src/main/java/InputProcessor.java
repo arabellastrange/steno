@@ -24,7 +24,7 @@ class InputProcessor {
         log = Logger.getLogger(InputProcessor.class.getName());
     }
 
-    public static byte[] processInput(String path) throws IOException {
+    static byte[] processInput(String path) throws IOException {
         Path inputPath = Paths.get(path);
         InputStream inputStream = InputStream.nullInputStream();
         try {
@@ -37,7 +37,7 @@ class InputProcessor {
         }
     }
 
-    public static byte[] addTypeAndSize(byte[] bytes) {
+    static byte[] addTypeAndSize(byte[] bytes) {
         byte[] fileSize = BigInteger.valueOf(bytes.length).toByteArray();
 
         //pad file size to 4 bytes
